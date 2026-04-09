@@ -1,0 +1,39 @@
+<form id="createProductForm" method="post">
+    <input type="text" name="name" id="name" placeholder="Name">
+    <input type="number" name="price" id="price" placeholder="Price">
+    <input type="number" name="stock" id="stock" placeholder="Stock">
+    <button type="submit">Create Product</button>
+</form>
+
+<a id="logout" href="/logout">Logout</a>
+
+<script>
+    document.getElementById("logout").addEventListener("click", async (e) => {
+        e.preventDefault();
+        const response = await fetch("http://localhost:8080/api/sessions/logout", {
+            method: "GET",
+        });
+        const data = await response.json();
+        if (data.message === "Session destroyed") {
+            window.location.href = "/login";
+        }
+    });
+</script>
+
+<script>
+    document.getElementById("createProductForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const price = document.getElementById("price").value;
+        const stock = document.getElementById("stock").value;
+        const response = await fetch("http://localhost:8080/api/products", {
+            method: "POST",
+            body: JSON.stringify({ name, price, stock }),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        console.log(data);
+    });
+</script>

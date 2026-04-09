@@ -1,0 +1,23 @@
+<!-- views/home.handlebars -->
+<h1>Hola {{nombre}}</h1>
+
+<ul>
+    {{#each products}}
+    <li>{{this.name}} - {{this.price}} - {{this.stock}}</li>
+    {{/each}}
+</ul>
+
+<a id="logout" href="/logout">Logout</a>
+
+<script>
+    document.getElementById("logout").addEventListener("click", async (e) => {
+        e.preventDefault();
+        const response = await fetch("http://localhost:8080/api/sessions/logout", {
+            method: "GET",
+        });
+        const data = await response.json();
+        if (data.message === "Session destroyed") {
+            window.location.href = "/login";
+        }
+    });
+</script>
