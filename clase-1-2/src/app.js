@@ -4,11 +4,12 @@ import productsRouter from "./routes/products.router.js";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import session from "express-session";
-import sessionsRouter from "./routes/sessions.routes.js";
+import usersRouter from "./routes/users.routes.js";
 import { engine } from 'express-handlebars';
 import viewsRouter from "./routes/views.router.js";
 import path from 'path';
 import { fileURLToPath } from 'url';
+import MongoStore from "connect-mongo";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,6 +20,10 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser(process.env.SECRET_COOKIE_KEY));
 app.use(session({
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        ttl: 60 * 60 * 1000
+    }),
     secret: process.env.SECRET_SESSION_KEY,
     resave: false,
     saveUninitialized: false,
@@ -32,7 +37,7 @@ app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
 app.use("/api/products", productsRouter);
-app.use("/api/sessions", sessionsRouter);
+app.use("/api/users", usersRouter);
 app.use("/", viewsRouter);
 
 // Cookies ejemplos -------------------------------------------------------------------

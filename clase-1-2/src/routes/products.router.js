@@ -7,7 +7,6 @@ const router = Router();
 router.get("/", authUser, async (req, res) => {
     try {
         const products = await Product.find();
-        console.log(req.session.user);
         res.json(products);
     } catch (error) {
         res.status(500).json({ message: error.message });

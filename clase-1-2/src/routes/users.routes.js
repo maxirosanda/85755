@@ -1,5 +1,6 @@
 import { Router } from "express";
 import userModel from "../models/user.model.js";
+import { createHash, isValidPassword } from "../utils/bcript.js";
 
 const router = Router();
 
@@ -8,8 +9,9 @@ router.post("/register", async (req, res) => {
     if (!name || !email || !password) {
         return res.status(400).json({ message: "Missing required fields" });
     }
+    const hashPassword = createHash(password);
     try {
-        await userModel.create({name,email,password,role:"user"});
+        await userModel.create({name,email,password:hashPassword,role:"user"});
         res.send("User created");
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -23,10 +25,17 @@ router.post("/login", async (req, res) => {
     if (!email || !password) {
         return res.status(400).json({ message: "Missing required fields" });
     }
-    const user = await userModel.findOne({ email, password });
+
+    const user = await userModel.findOne({ email });
     if (!user) {
         return res.status(404).json({ message: "User not found" });
     }
+
+    const validPassword = isValidPassword(password, user.password);
+    if (!validPassword) {
+        return res.status(401).json({ message: "Invalid password" });
+    }
+
     req.session.user = { name: user.name, email: user.email, role: user.role };
     res.json({message: "Session set", user: req.session.user});
 });
