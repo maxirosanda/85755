@@ -1,11 +1,13 @@
 import passport from "passport";
 import local from "passport-local"
+import GitHubStrategy from "passport-github2"
 import User from "../models/user.model.js"
 import { createHash, isValidPassword} from "../utils/bcript.js"
 
 const LocalStrategy = local.Strategy
 
 export const initializePassport = () => {
+
     passport.use("register",new LocalStrategy({
         passReqToCallback: true,
         usernameField: "email",
@@ -56,6 +58,28 @@ export const initializePassport = () => {
             return done(null,user)
         } catch (error) {
             return done(error)
+        }
+    }))
+
+    passport.use("github",new GitHubStrategy({
+        clientID:process.env.GITHUB_CLIENT_ID,
+        clientSecret:process.env.GITHUB_CLIENT_SECRET,
+        callbackURL:process.env.GITHUB_CALLBACK_URL,
+    },async (_,__,profile,done)=>{
+        try {
+            const user = await User.findOne({githubId:profile._json.id})
+            if(user) done(null,user)
+            const newUser = {
+                name:profile._json.name,
+                email:"",
+                githubId:profile._json.id,
+                password:"",
+                role:"user"
+            }
+            const result = await User.create(newUser)
+            done(null,result)
+        } catch (error) {
+            done(error)
         }
     }))
 

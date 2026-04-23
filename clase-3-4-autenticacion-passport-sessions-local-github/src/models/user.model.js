@@ -4,12 +4,15 @@ const userSchema = new mongoose.Schema({
     name: String,
     email: {
         type: String,
-        required: true,
-        unique: true,
+        default:"",
+    },
+    githubId:{
+        type:String,
+        default:""
     },
     password: {
         type: String,
-        required: true,
+        default:""
     },
     role: {
         type: String,

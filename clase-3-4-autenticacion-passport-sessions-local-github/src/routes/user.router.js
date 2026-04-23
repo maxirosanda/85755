@@ -3,6 +3,13 @@ import passport from "passport";
 
 const router = Router();
 
+
+router.get("/github",passport.authenticate("github"))
+
+router.get("/github-callback",passport.authenticate("github",{failureRedirect:"/api/users/fail"}),(req,res)=>{
+    res.json({message:"User logged in successfully"})
+})
+
 router.post("/register",passport.authenticate("register",{failureRedirect:"/api/users/fail"}),(req,res)=>{
     res.json({message:"User registered successfully"})
 })
