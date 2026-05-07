@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser'
 import productsRouter from './routes/products.router.js'
 import usersRouter from './routes/users.router.js'
 import mongoose from 'mongoose'
-import { intialisePassport } from './config/passport.js'
+import { intialisePassport } from './config/passport.config.js'
 import passport from 'passport'
 
 dotenv.config()
